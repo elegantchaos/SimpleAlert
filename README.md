@@ -1,3 +1,3 @@
-# SimpleSheet
+# SimpleAlert
 
 A description of this package.

@@ -6,13 +6,13 @@
 import XCTest
 import XCTestExtensions
 
-@testable import SimpleSheet
+@testable import SimpleAlert
 
-final class SimpleSheetTests: XCTestCase {
+final class SimpleAlertTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(SimpleSheet().text, "Hello, World!")
+        XCTAssertEqual(SimpleAlert().text, "Hello, World!")
     }
 }

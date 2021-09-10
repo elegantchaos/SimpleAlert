@@ -8,24 +8,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "SimpleSheet",
+    name: "SimpleAlert",
     platforms: [
         .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)
     ],
     products: [
         .library(
-            name: "SimpleSheet",
-            targets: ["SimpleSheet"]),
+            name: "SimpleAlert",
+            targets: ["SimpleAlert"]),
     ],
     dependencies: [
         .package(url: "https://github.com/elegantchaos/XCTestExtensions.git", from: "1.3.3")
     ],
     targets: [
         .target(
-            name: "SimpleSheet",
+            name: "SimpleAlert",
             dependencies: []),
         .testTarget(
-            name: "SimpleSheetTests",
-            dependencies: ["SimpleSheet", "XCTestExtensions"]),
+            name: "SimpleAlertTests",
+            dependencies: ["SimpleAlert", "XCTestExtensions"]),
     ]
 )
