@@ -11,12 +11,19 @@ public struct SimpleAlert {
     let primary: Button
     let secondary: Button?
     
-    enum Button {
+    public init(title: LocalizedStringKey, message: LocalizedStringKey, primary: SimpleAlert.Button, secondary: SimpleAlert.Button?) {
+        self.title = title
+        self.message = message
+        self.primary = primary
+        self.secondary = secondary
+    }
+
+    public enum Button {
         case normal(LocalizedStringKey,() -> ())
         case destructive(LocalizedStringKey, () -> ())
         case cancel
         
-        var alertButton: SwiftUI.Alert.Button {
+        var alertButton: Alert.Button {
             switch self {
                 case .normal(let label, let action):
                     return .default(Text(label), action: action)
@@ -26,5 +33,43 @@ public struct SimpleAlert {
                     return .cancel()
             }
         }
+    }
+}
+
+public struct SimpleAlertModifier: ViewModifier {
+    @Binding var alert: SimpleAlert?
+    
+    var showAlert: Binding<Bool> {
+        Binding<Bool>(
+            get: { alert != nil }, set: { value in if !value { alert = nil }}
+        )
+    }
+
+    public func body(content: Content) -> some View {
+        content
+            .alert(isPresented: showAlert) {
+                let alert = self.alert!
+                if let secondary = alert.secondary {
+                    return Alert(
+                        title: Text(alert.title),
+                        message: Text(alert.message),
+                        primaryButton: alert.primary.alertButton,
+                        secondaryButton: secondary.alertButton
+                    )
+                } else {
+                    return Alert(
+                        title: Text(alert.title),
+                        message: Text(alert.message),
+                        dismissButton: alert.primary.alertButton
+                    )
+                }
+            }
+    }
+}
+
+public extension View {
+    func simpleAlert(alert: Binding<SimpleAlert?>) -> some View {
+        return self
+            .modifier(SimpleAlertModifier(alert: alert))
     }
 }
