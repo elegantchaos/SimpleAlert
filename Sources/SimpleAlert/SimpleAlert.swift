@@ -68,7 +68,7 @@ public struct SimpleAlertModifier: ViewModifier {
 }
 
 public extension View {
-    func simpleAlert(alert: Binding<SimpleAlert?>) -> some View {
+    func simpleAlert(_ alert: Binding<SimpleAlert?>) -> some View {
         return self
             .modifier(SimpleAlertModifier(alert: alert))
     }
