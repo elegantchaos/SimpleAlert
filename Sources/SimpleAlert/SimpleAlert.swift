@@ -21,7 +21,7 @@ public struct SimpleAlert {
     public enum Button {
         case normal(LocalizedStringKey,() -> ())
         case destructive(LocalizedStringKey, () -> ())
-        case cancel
+        case cancel(() -> ())
         
         var alertButton: Alert.Button {
             switch self {
@@ -29,9 +29,13 @@ public struct SimpleAlert {
                     return .default(Text(label), action: action)
                 case .destructive(let label, let action):
                     return .destructive(Text(label), action: action)
-                case .cancel:
-                    return .cancel()
+                case .cancel(let action):
+                    return .cancel(action)
             }
+        }
+        
+        public static var cancel: Button {
+            return Self.cancel({})
         }
     }
 }
