@@ -11,7 +11,7 @@ public struct SimpleAlert {
     let primary: Button
     let secondary: Button?
     
-    public init(title: LocalizedStringKey, message: LocalizedStringKey, primary: SimpleAlert.Button, secondary: SimpleAlert.Button?) {
+    public init(title: LocalizedStringKey, message: LocalizedStringKey, primary: SimpleAlert.Button, secondary: SimpleAlert.Button? = nil) {
         self.title = title
         self.message = message
         self.primary = primary
@@ -21,7 +21,7 @@ public struct SimpleAlert {
     public enum Button {
         case normal(LocalizedStringKey,() -> ())
         case destructive(LocalizedStringKey, () -> ())
-        case cancel(() -> ())
+        case cancel(LocalizedStringKey?, () -> ())
         
         var alertButton: Alert.Button {
             switch self {
@@ -29,13 +29,25 @@ public struct SimpleAlert {
                     return .default(Text(label), action: action)
                 case .destructive(let label, let action):
                     return .destructive(Text(label), action: action)
-                case .cancel(let action):
-                    return .cancel(action)
+                case .cancel(let label, let action):
+                    if let label = label {
+                        return .cancel(Text(label), action: action)
+                    } else {
+                        return .cancel(action)
+                    }
             }
         }
         
+        public static func cancel(_ label: LocalizedStringKey) -> Button {
+            return Self.cancel(label, {})
+        }
+
+        public static func cancel(_ action: @escaping () -> ()) -> Button {
+            return Self.cancel(nil, action)
+        }
+
         public static var cancel: Button {
-            return Self.cancel({})
+            return Self.cancel(nil, {})
         }
     }
 }
