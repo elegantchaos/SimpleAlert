@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //  Created by Sam Deane on 10/09/2021.
@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
     name: "SimpleAlert",
     platforms: [
-        .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)
+        .macOS(.v12), .iOS(.v15), .tvOS(.v15), .watchOS(.v5)
     ],
     products: [
         .library(

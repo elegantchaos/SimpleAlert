@@ -8,46 +8,47 @@ import SwiftUI
 public struct SimpleAlert {
     let title: LocalizedStringKey
     let message: LocalizedStringKey
-    let primary: Button
-    let secondary: Button?
+    let buttons: [Button]
     
     public init(title: LocalizedStringKey, message: LocalizedStringKey, primary: SimpleAlert.Button, secondary: SimpleAlert.Button? = nil) {
         self.title = title
         self.message = message
-        self.primary = primary
-        self.secondary = secondary
+        var buttons = [primary]
+        if let secondary = secondary {
+            buttons.append(secondary)
+        }
+        self.buttons = buttons
     }
 
-    public enum Button {
-        case normal(LocalizedStringKey,() -> ())
-        case destructive(LocalizedStringKey, () -> ())
-        case cancel(LocalizedStringKey?, () -> ())
-        
-        var alertButton: Alert.Button {
-            switch self {
-                case .normal(let label, let action):
-                    return .default(Text(label), action: action)
-                case .destructive(let label, let action):
-                    return .destructive(Text(label), action: action)
-                case .cancel(let label, let action):
-                    if let label = label {
-                        return .cancel(Text(label), action: action)
-                    } else {
-                        return .cancel(action)
-                    }
-            }
+    public init(title: LocalizedStringKey, message: LocalizedStringKey, buttons: [SimpleAlert.Button]) {
+        self.title = title
+        self.message = message
+        self.buttons = buttons
+    }
+
+    public struct Button {
+        let label: String
+        let role: ButtonRole?
+        let action: () -> ()
+
+        public static func normal(_ label: String, _ action: @escaping () -> ()) -> Button {
+            return .init(label: label, role: nil, action: action)
         }
         
-        public static func cancel(_ label: LocalizedStringKey) -> Button {
-            return Self.cancel(label, {})
+        public static func cancel(_ label: String) -> Button {
+            return .init(label: label, role: .cancel, action: {})
         }
 
         public static func cancel(_ action: @escaping () -> ()) -> Button {
-            return Self.cancel(nil, action)
+            return .init(label: "Cancel", role: .cancel, action: action)
         }
 
         public static var cancel: Button {
-            return Self.cancel(nil, {})
+            return .init(label: "Cancel", role: .cancel, action: {})
+        }
+        
+        public static func destructive(_ label: String, _ action: @escaping () -> ()) -> Button {
+            return .init(label: label, role: .destructive, action: action)
         }
     }
 }
@@ -61,24 +62,26 @@ public struct SimpleAlertModifier: ViewModifier {
         )
     }
 
+    var buttons: [SimpleAlert.Button] {
+        alert?.buttons ?? []
+    }
+    
+    var title: LocalizedStringKey {
+        alert?.title ?? ""
+    }
+    
+    var message: LocalizedStringKey {
+        alert?.message ?? ""
+    }
+    
     public func body(content: Content) -> some View {
-        content
-            .alert(isPresented: showAlert) {
-                let alert = self.alert!
-                if let secondary = alert.secondary {
-                    return Alert(
-                        title: Text(alert.title),
-                        message: Text(alert.message),
-                        primaryButton: alert.primary.alertButton,
-                        secondaryButton: secondary.alertButton
-                    )
-                } else {
-                    return Alert(
-                        title: Text(alert.title),
-                        message: Text(alert.message),
-                        dismissButton: alert.primary.alertButton
-                    )
+        return content
+            .alert(title, isPresented: showAlert) {
+                ForEach(buttons, id: \.label) { button in
+                    SwiftUI.Button(LocalizedStringKey(button.label), role: button.role, action: button.action)
                 }
+            } message: {
+                Text(message)
             }
     }
 }
