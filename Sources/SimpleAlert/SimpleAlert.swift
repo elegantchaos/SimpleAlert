@@ -26,7 +26,7 @@ public struct SimpleAlert {
         self.buttons = buttons
     }
 
-    public init(title: LocalizedStringKey, verbatim message: String, buttons: [SimpleAlert.Button]) {
+    public init<S: StringProtocol>(title: LocalizedStringKey, verbatim message: S, buttons: [SimpleAlert.Button]) {
         self.title = title
         self.message = Text(message)
         self.buttons = buttons
