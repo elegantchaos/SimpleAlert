@@ -7,12 +7,12 @@ import SwiftUI
 
 public struct SimpleAlert {
     let title: LocalizedStringKey
-    let message: LocalizedStringKey
+    let message: Text
     let buttons: [Button]
     
     public init(title: LocalizedStringKey, message: LocalizedStringKey, primary: SimpleAlert.Button, secondary: SimpleAlert.Button? = nil) {
         self.title = title
-        self.message = message
+        self.message = Text(message)
         var buttons = [primary]
         if let secondary = secondary {
             buttons.append(secondary)
@@ -22,7 +22,13 @@ public struct SimpleAlert {
 
     public init(title: LocalizedStringKey, message: LocalizedStringKey, buttons: [SimpleAlert.Button]) {
         self.title = title
-        self.message = message
+        self.message = Text(message)
+        self.buttons = buttons
+    }
+
+    public init(title: LocalizedStringKey, verbatim message: String, buttons: [SimpleAlert.Button]) {
+        self.title = title
+        self.message = Text(message)
         self.buttons = buttons
     }
 
@@ -70,18 +76,22 @@ public struct SimpleAlertModifier: ViewModifier {
         alert?.title ?? ""
     }
     
-    var message: LocalizedStringKey {
-        alert?.message ?? ""
+    var message: Text {
+        alert?.message ?? Text("")
     }
     
     public func body(content: Content) -> some View {
         return content
             .alert(title, isPresented: showAlert) {
                 ForEach(buttons, id: \.label) { button in
-                    SwiftUI.Button(LocalizedStringKey(button.label), role: button.role, action: button.action)
+                    SwiftUI.Button(LocalizedStringKey(button.label), role: button.role) {
+                        DispatchQueue.main.async {
+                            button.action()
+                        }
+                    }
                 }
             } message: {
-                Text(message)
+                message
             }
     }
 }
